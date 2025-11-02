@@ -1,9 +1,9 @@
 // src/components/ReasoningPanel.tsx
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { Task, Decision, FeedbackKind } from '@/lib/types';
-import VoiceControlsOpenAI, { speakTextOpenAI } from './VoiceControlsOpenAI';
+import VoiceControlsOpenAI, { speakTextOpenAI, isAvaMuted } from './VoiceControlsOpenAI';
 
 export default function ReasoningPanel({ task, decision, onClose }:{ task:Task, decision:Decision, onClose:()=>void }){
   const [text, setText] = useState<string>('Generating explanation…');
@@ -11,6 +11,8 @@ export default function ReasoningPanel({ task, decision, onClose }:{ task:Task, 
   const [feedbackGiven, setFeedbackGiven] = useState<FeedbackKind | null>(null);
   const [showToast, setShowToast] = useState(false);
   const [shouldSpeak, setShouldSpeak] = useState(false);
+  const hasExplainedRef = useRef(false);
+  const hasSpokenInitialRef = useRef(false);
 
   async function explain() {
     const res = await fetch('/api/explain', {
@@ -50,16 +52,33 @@ export default function ReasoningPanel({ task, decision, onClose }:{ task:Task, 
     });
   }
 
-  // Auto-explain when panel opens
+  // Auto-explain when panel opens (guard against React StrictMode double-invoke)
   useEffect(() => {
+    if (hasExplainedRef.current) return;
+    hasExplainedRef.current = true;
     explain();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Speak response if triggered by voice input
+  // Speak the initial generated explanation once (when opening via "Let's Chat")
+  useEffect(() => {
+    if (!text || text === 'Generating explanation…') return;
+    if (hasSpokenInitialRef.current) return;
+    hasSpokenInitialRef.current = true;
+    if (isAvaMuted()) return;
+    (async () => {
+      try {
+        await speakTextOpenAI(text, 'alloy', 1.0, 6000);
+      } catch {}
+    })();
+  }, [text]);
+
+  // Speak response if triggered by voice input (follow-ups via mic)
   useEffect(() => {
     if (shouldSpeak && text && text !== 'Generating explanation…') {
-      speakTextOpenAI(text, 'nova', 1.15);
+      if (!isAvaMuted()) {
+        speakTextOpenAI(text, 'alloy', 1.0, 6000);
+      }
       setShouldSpeak(false);
     }
   }, [shouldSpeak, text]);
