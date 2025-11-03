@@ -243,7 +243,12 @@ export default function VoiceControlsOpenAI({
 }
 
 // Export helper function for speaking responses
-export async function speakTextOpenAI(text: string, voice: string = 'nova', speed: number = 1.15) {
+export async function speakTextOpenAI(
+  text: string,
+  voice: string = 'nova',
+  speed: number = 1.15,
+  timeoutMs?: number // optional, currently unused; kept for call-site compatibility
+) {
   if (isAvaMuted()) {
     return false;
   }
