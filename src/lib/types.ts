@@ -7,7 +7,16 @@ export type Signal = {
 
 export type Task = {
   id: string;
-  kind: 'SCORE_LEAD' | 'DRAFT_EMAIL' | 'PAUSE_SEQUENCE' | 'BOOK_MEETING' | 'RESEARCH_ACCOUNT';
+  kind:
+    | 'SCORE_LEAD'
+    | 'DRAFT_EMAIL'
+    | 'PAUSE_SEQUENCE'
+    | 'BOOK_MEETING'
+    | 'RESEARCH_ACCOUNT'
+    | 'ANALYZE_REPLIES'
+    | 'RE_ENGAGE'
+    | 'MONITOR_DELIVERY'
+    | 'DRAFT_SUMMARY';
   title: string;
   ts: number; // epoch ms
   metadata: Record<string, any>;
