@@ -8,6 +8,17 @@ interface VoiceControlsOpenAIProps {
   speed?: number; // 0.25 to 4.0, default 1.15 for slightly faster speech
 }
 
+// Global mute state for Ava's speech
+let avaMuted = false;
+
+export function isAvaMuted(): boolean {
+  return avaMuted;
+}
+
+export function setAvaMuted(muted: boolean): void {
+  avaMuted = muted;
+}
+
 export default function VoiceControlsOpenAI({ 
   onTranscript, 
   voice = 'nova', // Default to Nova (natural female voice)
@@ -109,6 +120,9 @@ export default function VoiceControlsOpenAI({
 
   // Speak text using OpenAI TTS
   const speakText = async (text: string) => {
+    if (isAvaMuted()) {
+      return;
+    }
     if (isSpeaking) {
       stopSpeaking();
     }
@@ -230,6 +244,9 @@ export default function VoiceControlsOpenAI({
 
 // Export helper function for speaking responses
 export async function speakTextOpenAI(text: string, voice: string = 'nova', speed: number = 1.15) {
+  if (isAvaMuted()) {
+    return false;
+  }
   try {
     const response = await fetch('/api/voice/speak', {
       method: 'POST',
