@@ -9,7 +9,7 @@ import ReasoningPanel from '@/components/ReasoningPanel';
 import CompletedList from '@/components/CompletedList';
 import InProgressList from '@/components/InProgressList';
 import { Task, Decision, InProgressTask } from '@/lib/types';
-import { speakTextOpenAI, setAvaMuted, isAvaMuted } from '@/components/VoiceControlsOpenAI';
+import { speakText } from '@/components/VoiceControls';
 
 const fetcher = (url: string) => fetch(url).then(r => r.json());
 
@@ -26,13 +26,12 @@ export default function Home() {
     setSpeechSupported(!!window.speechSynthesis);
     const hasSpeech = typeof window !== 'undefined' && 'speechSynthesis' in window;
     if (!hasSpeech) return;
-    setMuted(isAvaMuted());
     const line = "Hi, I’m Ava — your AI BDR. Click ‘Barge in’ to see what I’m currently working on, or click ‘Let’s chat’ to talk about what I’ve done in the past.";
 
     const trySpeak = async () => {
       if (introPlayed) return;
-      if (isAvaMuted()) { setIntroPlayed(true); return; }
-      try { await speakTextOpenAI(line, 'alloy', 1.0); } catch {}
+      if (muted) { setIntroPlayed(true); return; }
+      try { await speakText(line); } catch {}
       setIntroPlayed(true);
     };
 
@@ -65,8 +64,8 @@ export default function Home() {
 
     const onFirstInteract = async () => {
       if (introPlayed) return;
-      if (isAvaMuted()) { setIntroPlayed(true); cleanup(); return; }
-      try { await speakTextOpenAI(line, 'alloy', 1.0); } catch {}
+      if (muted) { setIntroPlayed(true); cleanup(); return; }
+      try { await speakText(line); } catch {}
       setIntroPlayed(true);
       cleanup();
     };
@@ -92,15 +91,14 @@ export default function Home() {
   const handlePlayIntro = async () => {
     if (!speechSupported) return;
     const line = "Hi, I’m Ava — your AI BDR. Click ‘Barge in’ to see what I’m currently working on, or click ‘Let’s chat’ to talk about what I’ve done in the past.";
-    if (isAvaMuted()) { setIntroPlayed(true); return; }
-    try { await speakTextOpenAI(line, 'alloy', 1.0); } catch {}
+    if (muted) { setIntroPlayed(true); return; }
+    try { await speakText(line); } catch {}
     setIntroPlayed(true);
   };
 
   const toggleMute = () => {
     const next = !muted;
     setMuted(next);
-    setAvaMuted(next);
   };
   
   // Fetch stats for footer

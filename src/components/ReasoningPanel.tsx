@@ -3,9 +3,9 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { Task, Decision, FeedbackKind } from '@/lib/types';
-import VoiceControlsOpenAI, { speakTextOpenAI, isAvaMuted } from './VoiceControlsOpenAI';
+import VoiceControls, { speakText } from './VoiceControls';
 
-export default function ReasoningPanel({ task, decision, onClose }:{ task:Task, decision:Decision, onClose:()=>void }){
+export default function ReasoningPanel({ task, decision, onClose, muted }:{ task:Task, decision:Decision, onClose:()=>void, muted: boolean }){
   const [text, setText] = useState<string>('Generating explanation…');
   const [history, setHistory] = useState<string>('');
   const [feedbackGiven, setFeedbackGiven] = useState<FeedbackKind | null>(null);
@@ -65,10 +65,10 @@ export default function ReasoningPanel({ task, decision, onClose }:{ task:Task, 
     if (!text || text === 'Generating explanation…') return;
     if (hasSpokenInitialRef.current) return;
     hasSpokenInitialRef.current = true;
-    if (isAvaMuted()) return;
+    if (muted) return;
     (async () => {
       try {
-        await speakTextOpenAI(text, 'alloy', 1.0);
+        await speakText(text);
       } catch {}
     })();
   }, [text]);
@@ -76,8 +76,8 @@ export default function ReasoningPanel({ task, decision, onClose }:{ task:Task, 
   // Speak response if triggered by voice input (follow-ups via mic)
   useEffect(() => {
     if (shouldSpeak && text && text !== 'Generating explanation…') {
-      if (!isAvaMuted()) {
-        speakTextOpenAI(text, 'alloy', 1.0);
+      if (!muted) {
+        speakText(text);
       }
       setShouldSpeak(false);
     }
@@ -192,10 +192,9 @@ export default function ReasoningPanel({ task, decision, onClose }:{ task:Task, 
 
         {/* Voice controls */}
         <div className="border-t pt-3">
-          <div className="text-xs font-medium text-gray-600 mb-2">🎙️ Voice Input (OpenAI Whisper)</div>
-          <VoiceControlsOpenAI 
+          <div className="text-xs font-medium text-gray-600 mb-2">🎙️ Voice Input</div>
+          <VoiceControls 
             onTranscript={(q) => askFollowup(q, true)}
-            voice="nova"
           />
         </div>
 
