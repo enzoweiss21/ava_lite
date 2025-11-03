@@ -15,85 +15,21 @@ const fetcher = (url: string) => fetch(url).then(r => r.json());
 
 export default function Home() {
   const [speaking] = useState(false);
-  const [introPlayed, setIntroPlayed] = useState(false);
   const [speechSupported, setSpeechSupported] = useState(false);
   const [muted, setMuted] = useState(false);
   const [panel, setPanel] = useState<{task:Task, decision:Decision}|null>(null);
   
-  // Introduce Ava aloud on page load
+  // Detect browser speech support (no auto-intro)
   useEffect(() => {
     if (typeof window === 'undefined') return;
     setSpeechSupported(!!window.speechSynthesis);
-    const hasSpeech = typeof window !== 'undefined' && 'speechSynthesis' in window;
-    if (!hasSpeech) return;
-    const line = "Hi, I’m Ava — your AI BDR. Click ‘Barge in’ to see what I’m currently working on, or click ‘Let’s chat’ to talk about what I’ve done in the past.";
-
-    const trySpeak = async () => {
-      if (introPlayed) return;
-      if (muted) { setIntroPlayed(true); return; }
-      try { await speakText(line); } catch {}
-      setIntroPlayed(true);
-    };
-
-    // Ensure voices are loaded before speaking (Chrome quirk)
-    const synth = window.speechSynthesis;
-    const startTimer = () => setTimeout(trySpeak, 600);
-
-    if (synth.getVoices().length > 0) {
-      const timerId = startTimer();
-      return () => clearTimeout(timerId as unknown as number);
-    }
-
-    const onVoices = () => {
-      const timerId = startTimer();
-      // cleanup both listener and timer
-      return () => clearTimeout(timerId as unknown as number);
-    };
-    synth.addEventListener('voiceschanged', onVoices, { once: true } as any);
-
-    return () => {
-      try { synth.removeEventListener('voiceschanged', onVoices as any); } catch {}
-    };
   }, []);
-
-  // Fallback: if autoplay is blocked, speak on first user interaction
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-    if (introPlayed) return;
-    const line = "Hi, I’m Ava — your AI BDR. Click ‘Barge in’ to see what I’m currently working on, or click ‘Let’s chat’ to talk about what I’ve done in the past.";
-
-    const onFirstInteract = async () => {
-      if (introPlayed) return;
-      if (muted) { setIntroPlayed(true); cleanup(); return; }
-      try { await speakText(line); } catch {}
-      setIntroPlayed(true);
-      cleanup();
-    };
-
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Enter' || e.key === ' ') {
-        onFirstInteract();
-      }
-    };
-
-    function cleanup(){
-      window.removeEventListener('pointerdown', onFirstInteract);
-      window.removeEventListener('keydown', onKey);
-    }
-    window.addEventListener('pointerdown', onFirstInteract, { once: true });
-    window.addEventListener('keydown', onKey);
-
-    return () => {
-      cleanup();
-    };
-  }, [introPlayed]);
 
   const handlePlayIntro = async () => {
     if (!speechSupported) return;
+    if (muted) return;
     const line = "Hi, I’m Ava — your AI BDR. Click ‘Barge in’ to see what I’m currently working on, or click ‘Let’s chat’ to talk about what I’ve done in the past.";
-    if (muted) { setIntroPlayed(true); return; }
     try { await speakText(line); } catch {}
-    setIntroPlayed(true);
   };
 
   const toggleMute = () => {
@@ -155,6 +91,15 @@ This decision was made with ${Math.round(inProgressTask.decision.confidence * 10
               {muted ? '🔇 Unmute Ava' : '🔊 Mute Ava'}
             </button>
 
+            <button
+              onClick={handlePlayIntro}
+              className="text-xs px-2 py-1 rounded border text-indigo-700 border-indigo-200 bg-indigo-50 hover:opacity-90"
+              title="Have Ava introduce herself"
+              disabled={!speechSupported || muted}
+            >
+              👋 Say hi to Ava
+            </button>
+
           </div>
         </div>
 
@@ -214,7 +159,7 @@ This decision was made with ${Math.round(inProgressTask.decision.confidence * 10
 
       {/* Reasoning panel overlay */}
       {panel && (
-        <ReasoningPanel task={panel.task} decision={panel.decision} onClose={()=>setPanel(null)} />
+        <ReasoningPanel task={panel.task} decision={panel.decision} onClose={()=>setPanel(null)} muted={muted} />
       )}
     </>
   );

@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { Task, Decision, FeedbackKind } from '@/lib/types';
-import VoiceControls, { speakText } from './VoiceControls';
+import VoiceControls, { speakText, stopSpeaking } from './VoiceControls';
 
 export default function ReasoningPanel({ task, decision, onClose, muted }:{ task:Task, decision:Decision, onClose:()=>void, muted: boolean }){
   const [text, setText] = useState<string>('Generating explanation…');
@@ -145,9 +145,20 @@ export default function ReasoningPanel({ task, decision, onClose, muted }:{ task
           </div>
         )}
 
-        {/* Explanation text */}
+        {/* Explanation text with Stop button */}
         <div className="prose prose-sm max-w-none whitespace-pre-wrap bg-gray-50 rounded-lg p-4 border border-gray-200">
-          {text}
+          <div className="flex items-start justify-between gap-3">
+            <div className="flex-1 min-w-0">
+              {text}
+            </div>
+            <button
+              onClick={() => stopSpeaking()}
+              className="shrink-0 text-xs px-3 py-1.5 rounded-lg bg-gray-200 text-gray-800 hover:bg-gray-300 transition-colors"
+              title="Stop voice"
+            >
+              🔇 Stop
+            </button>
+          </div>
         </div>
 
         {/* Feedback buttons */}

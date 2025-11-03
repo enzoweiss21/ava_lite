@@ -156,3 +156,10 @@ export function speakText(text: string) {
   }
 }
 
+// Export helper to stop any ongoing speech immediately
+export function stopSpeaking() {
+  if (typeof window !== 'undefined' && window.speechSynthesis) {
+    window.speechSynthesis.cancel();
+  }
+}
+
