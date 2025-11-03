@@ -68,7 +68,7 @@ export default function ReasoningPanel({ task, decision, onClose }:{ task:Task, 
     if (isAvaMuted()) return;
     (async () => {
       try {
-        await speakTextOpenAI(text, 'alloy', 1.0, 6000);
+        await speakTextOpenAI(text, 'alloy', 1.0);
       } catch {}
     })();
   }, [text]);
@@ -77,7 +77,7 @@ export default function ReasoningPanel({ task, decision, onClose }:{ task:Task, 
   useEffect(() => {
     if (shouldSpeak && text && text !== 'Generating explanation…') {
       if (!isAvaMuted()) {
-        speakTextOpenAI(text, 'alloy', 1.0, 6000);
+        speakTextOpenAI(text, 'alloy', 1.0);
       }
       setShouldSpeak(false);
     }

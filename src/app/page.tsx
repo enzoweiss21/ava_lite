@@ -32,7 +32,7 @@ export default function Home() {
     const trySpeak = async () => {
       if (introPlayed) return;
       if (isAvaMuted()) { setIntroPlayed(true); return; }
-      try { await speakTextOpenAI(line, 'alloy', 1.0, 6000); } catch {}
+      try { await speakTextOpenAI(line, 'alloy', 1.0); } catch {}
       setIntroPlayed(true);
     };
 
@@ -66,7 +66,7 @@ export default function Home() {
     const onFirstInteract = async () => {
       if (introPlayed) return;
       if (isAvaMuted()) { setIntroPlayed(true); cleanup(); return; }
-      try { await speakTextOpenAI(line, 'alloy', 1.0, 6000); } catch {}
+      try { await speakTextOpenAI(line, 'alloy', 1.0); } catch {}
       setIntroPlayed(true);
       cleanup();
     };
@@ -93,7 +93,7 @@ export default function Home() {
     if (!speechSupported) return;
     const line = "Hi, I’m Ava — your AI BDR. Click ‘Barge in’ to see what I’m currently working on, or click ‘Let’s chat’ to talk about what I’ve done in the past.";
     if (isAvaMuted()) { setIntroPlayed(true); return; }
-    try { await speakTextOpenAI(line, 'alloy', 1.0, 6000); } catch {}
+    try { await speakTextOpenAI(line, 'alloy', 1.0); } catch {}
     setIntroPlayed(true);
   };
 
