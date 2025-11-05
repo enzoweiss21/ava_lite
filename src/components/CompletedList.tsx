@@ -27,24 +27,24 @@ export default function CompletedList({ onExplain }: { onExplain: (t: Task, d: D
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: idx * 0.05 }}
-            className="p-3 rounded-lg bg-white border border-gray-200 hover:border-indigo-300 transition-colors"
+            className="p-4 rounded-xl bg-white border border-gray-200 hover:border-indigo-300 shadow-sm hover:shadow-md transition-colors"
           >
             <div className="flex items-start justify-between gap-3">
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-1">
-                  <span className="text-xs font-medium text-green-600">✓ Completed</span>
+                  <span className="text-xs font-medium text-green-700 bg-green-50 border border-green-200 px-2 py-0.5 rounded-full">✓ Completed</span>
                   <span className="text-xs text-gray-500">{timeAgo}</span>
                 </div>
-                <div className="font-medium text-sm mb-1 truncate">{task.title}</div>
+                <div className="font-medium text-sm mb-1 truncate text-gray-900">{task.title}</div>
                 <div className="text-xs text-gray-600 truncate">
                   {decision.action} • {Math.round(decision.confidence * 100)}% confidence
                 </div>
               </div>
               <button
                 onClick={() => onExplain(task, decision)}
-                className="shrink-0 text-xs px-3 py-1.5 rounded-lg bg-indigo-50 text-indigo-700 hover:bg-indigo-100 transition-colors font-medium"
+                className="shrink-0 text-xs px-3 py-1.5 rounded-lg bg-gradient-to-r from-indigo-500 to-purple-500 text-white hover:from-indigo-600 hover:to-purple-600 transition-all shadow-sm hover:shadow font-medium"
               >
-                💬 Let's Chat
+                💬 Chat
               </button>
             </div>
           </motion.div>

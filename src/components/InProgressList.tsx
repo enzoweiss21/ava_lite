@@ -33,7 +33,7 @@ function InProgressCard({ task, index, onBargeIn }: { task: InProgressTask; inde
       initial={{ opacity: 0, x: -20 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ delay: index * 0.05 }}
-      className="p-3 rounded-lg bg-white border border-gray-200 hover:border-indigo-300 transition-colors"
+      className="p-4 rounded-xl bg-white border border-gray-200 hover:border-indigo-300 shadow-sm hover:shadow-md transition-colors"
     >
       <div className="flex items-start justify-between gap-3 mb-2">
         <div className="flex-1 min-w-0">
@@ -44,14 +44,14 @@ function InProgressCard({ task, index, onBargeIn }: { task: InProgressTask; inde
             </div>
             <span className="text-xs text-gray-500">{Math.round(progress)}%</span>
           </div>
-          <div className="font-medium text-sm mb-1">{task.task.title}</div>
+          <div className="font-medium text-sm mb-1 text-gray-900">{task.task.title}</div>
           <div className="text-xs text-gray-600">
             Step {task.currentStep + 1} of {task.steps.length}: {task.steps[task.currentStep]?.name}
           </div>
         </div>
         <button
           onClick={() => onBargeIn(task)}
-          className="shrink-0 text-xs px-3 py-1.5 rounded-lg bg-blue-50 text-blue-700 hover:bg-blue-100 transition-colors font-medium"
+          className="shrink-0 text-xs px-3 py-1.5 rounded-lg bg-gradient-to-r from-blue-500 to-indigo-500 text-white hover:from-blue-600 hover:to-indigo-600 transition-all shadow-sm hover:shadow font-medium"
         >
           🚀 Barge In
         </button>
@@ -94,7 +94,7 @@ function InProgressCard({ task, index, onBargeIn }: { task: InProgressTask; inde
                   ) : (
                     <span className="text-gray-400">○</span>
                   )}
-                  <span className={step.completed ? 'text-gray-500 line-through' : 'text-gray-700'}>
+                  <span className={step.completed ? 'text-gray-500 line-through' : 'text-gray-800'}>
                     {step.name}
                   </span>
                 </div>

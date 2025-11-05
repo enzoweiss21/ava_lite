@@ -87,12 +87,12 @@ export default function ReasoningPanel({ task, decision, onClose, muted }:{ task
   const topSignals = decision.signals.slice(0, 3);
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-end sm:items-center justify-center p-4 z-50">
+    <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-end sm:items-center justify-center p-4 z-50">
       <motion.div 
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        exit={{ opacity: 0, scale: 0.95 }}
-        className="w-full sm:max-w-3xl rounded-2xl bg-white p-6 space-y-4 max-h-[90vh] overflow-y-auto"
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: 10 }}
+        className="w-full sm:max-w-3xl rounded-2xl bg-white p-6 space-y-4 max-h-[90vh] overflow-y-auto border border-gray-200 shadow-xl"
       >
         {/* Header */}
         <div className="flex items-center justify-between">
@@ -149,7 +149,7 @@ export default function ReasoningPanel({ task, decision, onClose, muted }:{ task
         <div className="prose prose-sm max-w-none whitespace-pre-wrap bg-gray-50 rounded-lg p-4 border border-gray-200">
           <div className="flex items-start justify-between gap-3">
             <div className="flex-1 min-w-0">
-              {text}
+          {text}
             </div>
             <button
               onClick={() => stopSpeaking()}
